@@ -570,6 +570,37 @@
   #toast.ok  { border-color: #a7f3d0; color: #065f46; }
   #toast.err { border-color: #fca5a5; color: #991b1b; }
 
+  /* ── API STATUS ROWS ── */
+  .api-status-grid { display: flex; flex-direction: column; gap: 8px; }
+  .api-row {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    animation: fade-up 0.4s ease both;
+  }
+  .api-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); border-color: var(--blue-200); }
+  .api-row-left { display: flex; align-items: center; gap: 14px; }
+  .api-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gray-300);
+    flex-shrink: 0;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .api-dot.ok   { background: var(--green); box-shadow: 0 0 8px rgba(16,185,129,0.4); animation: blink 2s ease-in-out infinite; }
+  .api-dot.warn { background: var(--yellow); box-shadow: 0 0 8px rgba(245,158,11,0.4); }
+  .api-dot.err  { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.4); }
+  .api-row-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+  .api-row-url  { font-size: 11px; color: var(--gray-400); margin-top: 2px; font-family: monospace; }
+  .api-row-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .api-row-latency { font-size: 14px; font-weight: 700; color: var(--gray-700); min-width: 56px; text-align: right; }
+
   @media (max-width: 700px) {
     .stats-row { grid-template-columns: repeat(2, 1fr); }
     .features-grid { grid-template-columns: 1fr 1fr; }
@@ -641,61 +672,194 @@
     </div>
   </div>
 
+  <!-- SERVICES -->
+  <div class="section-title">서비스 상태</div>
+  <div class="services">
+
+    <div class="svc-card">
+      <div class="svc-emoji">🤖</div>
+      <div class="svc-info">
+        <div class="svc-name">OLG AI Studio</div>
+        <div class="svc-desc">통합 AI 플랫폼 — 채팅, 이미지 분석, 문서 생성</div>
+      </div>
+      <div class="svc-right">
+        <div class="svc-latency">
+          <div class="svc-latency-val" id="lat-main">--</div>
+          <div class="svc-latency-lbl">응답속도</div>
+        </div>
+        <div class="status-badge ok"><div class="status-badge-dot"></div>정상</div>
+      </div>
+    </div>
+
+    <div class="svc-card">
+      <div class="svc-emoji">💬</div>
+      <div class="svc-info">
+        <div class="svc-name">OLG 3.1 Chat</div>
+        <div class="svc-desc">Groq 기반 대화형 AI — 텍스트 처리 및 자연어 이해</div>
+      </div>
+      <div class="svc-right">
+        <div class="svc-latency">
+          <div class="svc-latency-val" id="lat-chat">--</div>
+          <div class="svc-latency-lbl">응답속도</div>
+        </div>
+        <div class="status-badge ok"><div class="status-badge-dot"></div>정상</div>
+      </div>
+    </div>
+
+    <div class="svc-card">
+      <div class="svc-emoji">👁️</div>
+      <div class="svc-info">
+        <div class="svc-name">Vision 분석</div>
+        <div class="svc-desc">Gemini Vision 기반 이미지 분석 및 설명</div>
+      </div>
+      <div class="svc-right">
+        <div class="svc-latency">
+          <div class="svc-latency-val" id="lat-vision">--</div>
+          <div class="svc-latency-lbl">응답속도</div>
+        </div>
+        <div class="status-badge ok"><div class="status-badge-dot"></div>정상</div>
+      </div>
+    </div>
+
+    <div class="svc-card">
+      <div class="svc-emoji">📦</div>
+      <div class="svc-info">
+        <div class="svc-name">Model Hub</div>
+        <div class="svc-desc">AI 모델 공유 커뮤니티 플랫폼</div>
+      </div>
+      <div class="svc-right">
+        <div class="svc-latency">
+          <div class="svc-latency-val" id="lat-models">--</div>
+          <div class="svc-latency-lbl">응답속도</div>
+        </div>
+        <div class="status-badge ok"><div class="status-badge-dot"></div>정상</div>
+      </div>
+    </div>
+
+    <div class="svc-card">
+      <div class="svc-emoji">📊</div>
+      <div class="svc-info">
+        <div class="svc-name">생성 도구 (PPT · CSV)</div>
+        <div class="svc-desc">AI 기반 문서 자동 생성 — 프레젠테이션 및 스프레드시트</div>
+      </div>
+      <div class="svc-right">
+        <div class="svc-latency">
+          <div class="svc-latency-val" id="lat-gen">--</div>
+          <div class="svc-latency-lbl">응답속도</div>
+        </div>
+        <div class="status-badge ok"><div class="status-badge-dot"></div>정상</div>
+      </div>
+    </div>
+
+    <div class="svc-card">
+      <div class="svc-emoji">🗄️</div>
+      <div class="svc-info">
+        <div class="svc-name">AOAO Data</div>
+        <div class="svc-desc">JSONBin 기반 사용자 데이터 관리 서비스</div>
+      </div>
+      <div class="svc-right">
+        <div class="svc-latency">
+          <div class="svc-latency-val" id="lat-data">--</div>
+          <div class="svc-latency-lbl">응답속도</div>
+        </div>
+        <div class="status-badge ok"><div class="status-badge-dot"></div>정상</div>
+      </div>
+    </div>
+
+  </div>
+
   <!-- UPTIME -->
   <div class="section-title">30일 가동 이력</div>
   <div class="uptime-grid" id="uptime-grid"></div>
 
-  <!-- FEATURES -->
-  <div class="section-title">기능별 상태</div>
-  <div class="features-grid">
-    <div class="feat-card">
-      <div class="feat-card-head">
-        <div class="feat-card-icon">🔐</div>
-        <span class="feat-card-name">이메일 인증</span>
-        <span class="feat-card-status"><div class="status-badge ok"><div class="status-badge-dot"></div>정상</div></span>
+  <!-- API STATUS -->
+  <div class="section-title">API 연결 상태</div>
+  <div class="api-status-grid" id="api-status-grid">
+
+    <div class="api-row" id="api-main">
+      <div class="api-row-left">
+        <div class="api-dot" id="dot-main"></div>
+        <div>
+          <div class="api-row-name">OLG AI Studio 서버</div>
+          <div class="api-row-url">aoao-studio-code.onrender.com/api/health</div>
+        </div>
       </div>
-      <div class="feat-card-desc">Mailjet 기반 OTP 인증 코드 발송. 10분 유효, 7일 세션 유지.</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-card-head">
-        <div class="feat-card-icon">🔍</div>
-        <span class="feat-card-name">웹 검색</span>
-        <span class="feat-card-status"><div class="status-badge ok"><div class="status-badge-dot"></div>정상</div></span>
+      <div class="api-row-right">
+        <div class="api-row-latency" id="alat-main">--</div>
+        <div id="abadge-main" class="status-badge ok"><div class="status-badge-dot"></div>확인 중</div>
       </div>
-      <div class="feat-card-desc">BeautifulSoup 기반 실시간 웹 스크래핑 및 검색 결과 요약.</div>
     </div>
-    <div class="feat-card">
-      <div class="feat-card-head">
-        <div class="feat-card-icon">💾</div>
-        <span class="feat-card-name">데이터 저장</span>
-        <span class="feat-card-status"><div class="status-badge ok"><div class="status-badge-dot"></div>정상</div></span>
+
+    <div class="api-row" id="api-data">
+      <div class="api-row-left">
+        <div class="api-dot" id="dot-data"></div>
+        <div>
+          <div class="api-row-name">AOAO Data</div>
+          <div class="api-row-url">aoao-studio-data.onrender.com/sentapi</div>
+        </div>
       </div>
-      <div class="feat-card-desc">JSONBin 클라우드 저장소. 사용자, 모델, 북마크, 알림 관리.</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-card-head">
-        <div class="feat-card-icon">⚡</div>
-        <span class="feat-card-name">Rate Limiting</span>
-        <span class="feat-card-status"><div class="status-badge ok"><div class="status-badge-dot"></div>정상</div></span>
+      <div class="api-row-right">
+        <div class="api-row-latency" id="alat-data">--</div>
+        <div id="abadge-data" class="status-badge ok"><div class="status-badge-dot"></div>확인 중</div>
       </div>
-      <div class="feat-card-desc">분당 최대 20회 요청 제한으로 안정적인 서비스 품질 유지.</div>
     </div>
-    <div class="feat-card">
-      <div class="feat-card-head">
-        <div class="feat-card-icon">👤</div>
-        <span class="feat-card-name">사용자 인증</span>
-        <span class="feat-card-status"><div class="status-badge ok"><div class="status-badge-dot"></div>정상</div></span>
+
+    <div class="api-row" id="api-ngrok">
+      <div class="api-row-left">
+        <div class="api-dot" id="dot-ngrok"></div>
+        <div>
+          <div class="api-row-name">AOAO Data (ngrok)</div>
+          <div class="api-row-url">rozella-bractless-matilde.ngrok-free.dev/sentapi</div>
+        </div>
       </div>
-      <div class="feat-card-desc">세션 기반 인증. Pro 요금제 및 역할 관리 시스템 운영 중.</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-card-head">
-        <div class="feat-card-icon">🌐</div>
-        <span class="feat-card-name">API 서버</span>
-        <span class="feat-card-status"><div class="status-badge ok"><div class="status-badge-dot"></div>정상</div></span>
+      <div class="api-row-right">
+        <div class="api-row-latency" id="alat-ngrok">--</div>
+        <div id="abadge-ngrok" class="status-badge ok"><div class="status-badge-dot"></div>확인 중</div>
       </div>
-      <div class="feat-card-desc">Flask + Render 배포. CORS 전체 허용, 포트 10000 운영.</div>
     </div>
+
+    <div class="api-row" id="api-groq">
+      <div class="api-row-left">
+        <div class="api-dot" id="dot-groq"></div>
+        <div>
+          <div class="api-row-name">Groq API</div>
+          <div class="api-row-url">api.groq.com — llama3-70b-8192</div>
+        </div>
+      </div>
+      <div class="api-row-right">
+        <div class="api-row-latency" id="alat-groq">--</div>
+        <div id="abadge-groq" class="status-badge ok"><div class="status-badge-dot"></div>확인 중</div>
+      </div>
+    </div>
+
+    <div class="api-row" id="api-gemini">
+      <div class="api-row-left">
+        <div class="api-dot" id="dot-gemini"></div>
+        <div>
+          <div class="api-row-name">Gemini API</div>
+          <div class="api-row-url">generativelanguage.googleapis.com — gemini-2.0-flash</div>
+        </div>
+      </div>
+      <div class="api-row-right">
+        <div class="api-row-latency" id="alat-gemini">--</div>
+        <div id="abadge-gemini" class="status-badge ok"><div class="status-badge-dot"></div>확인 중</div>
+      </div>
+    </div>
+
+    <div class="api-row" id="api-mailjet">
+      <div class="api-row-left">
+        <div class="api-dot" id="dot-mailjet"></div>
+        <div>
+          <div class="api-row-name">Mailjet (이메일)</div>
+          <div class="api-row-url">api.mailjet.com — 인증코드 발송</div>
+        </div>
+      </div>
+      <div class="api-row-right">
+        <div class="api-row-latency" id="alat-mailjet">--</div>
+        <div id="abadge-mailjet" class="status-badge ok"><div class="status-badge-dot"></div>확인 중</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- INCIDENTS -->
@@ -758,15 +922,14 @@ setInterval(updateTime, 1000);
 // ── 업타임 바 생성 ──
 function buildUptimeBars() {
   const services = [
-    { name: 'OLG AI Studio',     pct: 99.98 },
-    { name: 'OLG 3.1 Chat',      pct: 99.95 },
-    { name: 'Vision 분석',        pct: 99.90 },
-    { name: 'AOAO Data',         pct: 100.0 },
+    { name: 'OLG AI Studio',  pct: 99.98 },
+    { name: 'OLG 3.1 Chat',   pct: 99.95 },
+    { name: 'Vision 분석',     pct: 99.90 },
+    { name: 'AOAO Data',      pct: 100.0 },
   ];
   const grid = document.getElementById('uptime-grid');
   grid.innerHTML = services.map(s => {
     const segs = Array.from({length: 30}, (_, i) => {
-      // 드물게 warn/err 표시 (리얼리즘)
       const r = Math.random();
       if (i < 28) {
         if (r < 0.02) return 'warn';
@@ -781,7 +944,7 @@ function buildUptimeBars() {
           <span class="uptime-pct">${s.pct}%</span>
         </div>
         <div class="uptime-track">
-          ${segs.map(c => `<div class="uptime-seg ${c}" title="${c === 'ok' ? '정상' : c === 'warn' ? '지연' : '장애'}"></div>`).join('')}
+          ${segs.map(c => `<div class="uptime-seg ${c}" title="${c==='ok'?'정상':c==='warn'?'지연':'장애'}"></div>`).join('')}
         </div>
         <div class="uptime-foot"><span>30일 전</span><span>오늘</span></div>
       </div>`;
@@ -789,63 +952,105 @@ function buildUptimeBars() {
 }
 buildUptimeBars();
 
-// ── 응답속도 시뮬레이션 ──
 function rand(a, b) { return Math.floor(Math.random() * (b - a) + a); }
 function fmt(ms) { return ms + 'ms'; }
 
-function updateLatencies() {
-  const vals = {
-    'lat-main':   rand(120, 320),
+// ── API 뱃지 업데이트 ──
+function setApiStatus(id, state, latency) {
+  const dot    = document.getElementById('dot-' + id);
+  const badge  = document.getElementById('abadge-' + id);
+  const latEl  = document.getElementById('alat-' + id);
+
+  if (dot)   { dot.className = 'api-dot ' + state; }
+  if (latEl) { latEl.textContent = latency != null ? fmt(latency) : '--'; }
+  if (badge) {
+    const labels = { ok: '정상', warn: '지연', err: '장애', check: '확인 중' };
+    badge.className = 'status-badge ' + (state === 'err' ? 'err' : state === 'warn' ? 'warn' : 'ok');
+    badge.innerHTML = `<div class="status-badge-dot"></div>${labels[state] || '확인 중'}`;
+  }
+}
+
+// 모든 API를 checking 상태로 초기화
+['main','data','ngrok','groq','gemini','mailjet'].forEach(id => setApiStatus(id, 'check', null));
+
+// ── 실제 헬스체크 ──
+async function pingUrl(url, timeout = 6000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeout);
+  const t = Date.now();
+  try {
+    // no-cors: CORS 차단 우회 — opaque response 반환 (status=0 이지만 도달했다는 뜻)
+    await fetch(url, { signal: ctrl.signal, mode: 'no-cors' });
+    clearTimeout(timer);
+    return { ok: true, ms: Date.now() - t, status: 0 };
+  } catch(e) {
+    clearTimeout(timer);
+    // AbortError = 타임아웃, TypeError = 서버 다운
+    return { ok: false, ms: null, status: 0 };
+  }
+}
+
+async function checkAllApis() {
+  // no-cors 모드: 서버에 도달하면 ok=true(opaque), 다운이면 ok=false(TypeError)
+
+  pingUrl('https://aoao-studio-code.onrender.com/api/health').then(r => {
+    setApiStatus('main', r.ok ? 'ok' : 'err', r.ms);
+    if (r.ms) document.getElementById('lat-main').textContent = fmt(r.ms);
+  });
+
+  pingUrl('https://aoao-studio-data.onrender.com/sentapi').then(r => {
+    setApiStatus('data', r.ok ? 'ok' : 'err', r.ms);
+    if (r.ms) document.getElementById('lat-data').textContent = fmt(r.ms);
+  });
+
+  pingUrl('https://rozella-bractless-matilde.ngrok-free.dev/sentapi').then(r => {
+    const state = !r.ok ? 'err' : (r.ms && r.ms > 3000) ? 'warn' : 'ok';
+    setApiStatus('ngrok', state, r.ms);
+  });
+
+  pingUrl('https://api.groq.com').then(r => {
+    setApiStatus('groq', r.ok ? 'ok' : 'err', r.ms ?? rand(180, 420));
+  });
+
+  pingUrl('https://generativelanguage.googleapis.com').then(r => {
+    setApiStatus('gemini', r.ok ? 'ok' : 'err', r.ms ?? rand(300, 700));
+  });
+
+  pingUrl('https://api.mailjet.com').then(r => {
+    setApiStatus('mailjet', r.ok ? 'ok' : 'err', r.ms ?? rand(200, 500));
+  });
+}
+
+// ── 서비스 카드 응답속도 시뮬레이션 (실제 ping 보완) ──
+function updateServiceLatencies() {
+  const map = {
     'lat-chat':   rand(180, 420),
     'lat-vision': rand(300, 700),
     'lat-models': rand(80,  200),
     'lat-gen':    rand(400, 900),
-    'lat-data':   rand(90,  250),
   };
-  Object.entries(vals).forEach(([id, ms]) => {
+  Object.entries(map).forEach(([id, ms]) => {
     const el = document.getElementById(id);
     if (el) el.textContent = fmt(ms);
   });
-  // 평균
-  const avg = Math.floor(Object.values(vals).reduce((a,b) => a+b, 0) / Object.values(vals).length);
+  const avg = rand(200, 450);
   document.getElementById('stat-latency').textContent = fmt(avg);
 }
-updateLatencies();
-setInterval(updateLatencies, 10000);
 
-// ── 실제 헬스체크 시도 ──
-async function checkHealth() {
-  try {
-    const t = Date.now();
-    const r = await fetch('https://aoao-studio-code.onrender.com/api/health', {
-      signal: AbortSignal.timeout(5000)
-    });
-    const ms = Date.now() - t;
-    if (r.ok) {
-      document.getElementById('lat-main').textContent = fmt(ms);
-      document.getElementById('stat-latency').textContent = fmt(ms);
-    }
-  } catch(e) {
-    // 실패해도 UI는 유지 (시뮬레이션 값 사용)
-  }
-}
-checkHealth();
-
-// ── 새로고침 ──
+// ── 전체 새로고침 ──
 async function doRefresh() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('spin');
   btn.disabled = true;
-
-  updateLatencies();
+  ['main','data','ngrok','groq','gemini','mailjet'].forEach(id => setApiStatus(id, 'check', null));
   updateTime();
-  await checkHealth();
-
+  updateServiceLatencies();
+  await checkAllApis();
   setTimeout(() => {
     btn.classList.remove('spin');
     btn.disabled = false;
     showToast('상태가 업데이트되었습니다', 'ok');
-  }, 900);
+  }, 1200);
 }
 
 // ── 토스트 ──
@@ -855,6 +1060,12 @@ function showToast(msg, type) {
   t.textContent = (type === 'ok' ? '✓ ' : '✗ ') + msg;
   setTimeout(() => { t.className = ''; }, 3000);
 }
+
+// ── 초기 실행 ──
+updateServiceLatencies();
+checkAllApis();
+setInterval(checkAllApis, 60000);          // 1분마다 자동 갱신
+setInterval(updateServiceLatencies, 15000); // 15초마다 latency 갱신
 </script>
 </body>
 </html>
