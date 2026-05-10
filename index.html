@@ -74,7 +74,126 @@
       width: 0%;
       background: #2563eb;
       border-radius: 99px;
-      animation: grow 6s cubic-bezier(.4,0,.2,1) .4s forwards;
+      /* animation은 JS에서 차단 확인 후 시작 */
+    }
+
+    /* 차단 화면 */
+    .blocked-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #eef1f7;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .blocked-screen.show { display: flex; }
+
+    .blocked-card {
+      position: relative;
+      width: min(480px, calc(100vw - 48px));
+      padding: 52px 48px 44px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      animation: up .55s cubic-bezier(.22,1,.36,1) forwards;
+    }
+
+    .blocked-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #ef4444;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 3px;
+      padding: 4px 10px;
+      margin-bottom: 28px;
+    }
+    .blocked-badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #ef4444;
+      flex-shrink: 0;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .3; }
+    }
+
+    .blocked-title {
+      font-size: clamp(24px, 3.5vw, 34px);
+      font-weight: 500;
+      color: #0f172a;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .blocked-title .studio {
+      color: #2563eb;
+    }
+
+    .blocked-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: #64748b;
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+
+    .blocked-divider {
+      width: 100%;
+      height: 1px;
+      background: #e2e8f0;
+      margin-bottom: 28px;
+    }
+
+    .blocked-contact-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .blocked-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      font-weight: 400;
+      color: #2563eb;
+      text-decoration: none;
+      letter-spacing: .02em;
+      transition: opacity .15s;
+    }
+    .blocked-email:hover { opacity: .7; }
+    .blocked-email svg {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .blocked-corner {
+      position: absolute;
+      top: 20px; right: 20px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: #cbd5e1;
+      letter-spacing: .1em;
     }
 
     @keyframes up   { to { opacity: 1; transform: none; } }
@@ -87,18 +206,130 @@
 
 <canvas id="c"></canvas>
 
-<div class="wrap">
+<div class="wrap" id="mainWrap">
   <p class="label">made by</p>
   <h1 class="name"><span class="accent">KWJ</span> <span class="dim">/ 김우준</span></h1>
   <p class="sub">aoao-studio.onrender.com</p>
-  <div class="progress"><div class="progress-fill"></div></div>
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<!-- 차단된 IP 화면 -->
+<div class="blocked-screen" id="blockedScreen">
+  <div class="blocked-card">
+    <span class="blocked-corner">aoao-studio</span>
+    <div class="blocked-badge">접근 차단됨</div>
+    <h1 class="blocked-title"><span class="studio">aoao</span> studio가<br>조사 중입니다</h1>
+    <p class="blocked-desc">
+      현재 귀하의 접속이 일시적으로 제한되어 있습니다.<br>
+      해당 조치에 이의가 있으신 경우 아래 이메일로<br>
+      문의해 주시기 바랍니다.
+    </p>
+    <div class="blocked-divider"></div>
+    <p class="blocked-contact-label">이의 제기</p>
+    <a class="blocked-email" href="mailto:rladnwns54@gmail.com">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+      rladnwns54@gmail.com
+    </a>
+  </div>
 </div>
 
 <script>
-const REDIRECT_TO = "/main"; // ✏️ 경로 수정
+// =====================================================
+// Supabase 설정
+// =====================================================
+const SUPABASE_URL  = 'https://hhetfxobzbimkanmsvvs.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoZXRmeG9iemJpbWthbm1zdnZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MDQzNzksImV4cCI6MjA5Mzk4MDM3OX0.CnAUIX0MHJhzVqY8eicmk90MOA-8Ncf0qKgDsHGLzX4';
+const REDIRECT_TO   = '/main';
 
+const headers = {
+  'Content-Type': 'application/json',
+  'apikey': SUPABASE_ANON,
+  'Authorization': `Bearer ${SUPABASE_ANON}`,
+};
+
+// =====================================================
+// IP 가져오기 (공개 API)
+// =====================================================
+async function getIP() {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json');
+    const data = await res.json();
+    return data.ip || 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
+
+// =====================================================
+// 차단된 IP 여부 확인
+// =====================================================
+async function isBlocked(ip) {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/blocked_ips?ip=eq.${encodeURIComponent(ip)}&select=ip`,
+      { headers }
+    );
+    const data = await res.json();
+    return Array.isArray(data) && data.length > 0;
+  } catch {
+    return false; // 오류 시 차단 안 함
+  }
+}
+
+// =====================================================
+// 방문 IP 기록
+// =====================================================
+async function logVisit(ip) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/visitor_logs`, {
+      method: 'POST',
+      headers: { ...headers, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({
+        ip,
+        user_agent: navigator.userAgent,
+      }),
+    });
+  } catch (e) {
+    console.warn('IP 로그 실패:', e);
+  }
+}
+
+// =====================================================
+// 메인 흐름
+// =====================================================
+async function init() {
+  const ip = await getIP();
+  const blocked = await isBlocked(ip);
+
+  if (blocked) {
+    // 차단 화면 표시
+    document.getElementById('mainWrap').style.display = 'none';
+    document.getElementById('blockedScreen').classList.add('show');
+    return; // 리다이렉트 없음
+  }
+
+  // 방문 기록
+  await logVisit(ip);
+
+  // 프로그레스 바 애니메이션 시작
+  const fill = document.getElementById('progressFill');
+  fill.style.transition = 'width 6s cubic-bezier(.4,0,.2,1)';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { fill.style.width = '100%'; });
+  });
+
+  // 6초 후 리다이렉트
+  setTimeout(() => {
+    document.body.classList.add('out');
+    setTimeout(() => { window.location.href = REDIRECT_TO; }, 500);
+  }, 6000);
+}
+
+// =====================================================
+// 캔버스 애니메이션
+// =====================================================
 const cvs = document.getElementById('c');
-const ctx = cvs.getContext('2d');
+const ctx  = cvs.getContext('2d');
 let W, H;
 
 function resize() {
@@ -108,13 +339,10 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-// 색상 팔레트 — bg 기반 블루-그레이
-const BLUE   = '37,99,235';   // #2563eb
-const SLATE  = '148,163,184'; // #94a3b8
-const DARK   = '15,23,42';    // #0f172a
-const GRID   = 80;
+const BLUE  = '37,99,235';
+const SLATE = '148,163,184';
+const GRID  = 80;
 
-/* triangles */
 function makeTri() {
   const s = 30 + Math.random() * 110;
   return {
@@ -131,9 +359,7 @@ function makeTri() {
   };
 }
 
-const tris = Array.from({ length: 20 }, makeTri);
-
-/* orbiting rings */
+const tris  = Array.from({ length: 20 }, makeTri);
 const rings = Array.from({ length: 5 }, (_, i) => ({
   cx: (W || 1200) * (.15 + i * .18),
   cy: (H || 800)  * (.25 + (i % 2) * .4),
@@ -143,8 +369,6 @@ const rings = Array.from({ length: 5 }, (_, i) => ({
   alpha: .09 + i * .01,
   col: i % 2 === 0 ? BLUE : SLATE,
 }));
-
-/* diagonal drift lines */
 const dlines = Array.from({ length: 10 }, (_, i) => ({
   y: ((H || 800) / 10) * i,
   vy: .12 + Math.random() * .18,
@@ -155,7 +379,6 @@ const dlines = Array.from({ length: 10 }, (_, i) => ({
 function draw() {
   ctx.clearRect(0, 0, W, H);
 
-  /* subtle grid */
   ctx.lineWidth = .5;
   ctx.strokeStyle = `rgba(${SLATE},0.15)`;
   for (let x = 0; x < W; x += GRID) {
@@ -165,7 +388,6 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
   }
 
-  /* diagonal lines */
   dlines.forEach(dl => {
     dl.y += dl.vy;
     if (dl.y > H + 80) dl.y = -80;
@@ -179,25 +401,21 @@ function draw() {
     ctx.restore();
   });
 
-  /* rings */
   rings.forEach(rg => {
     rg.angle += rg.speed;
     const px = rg.cx + Math.cos(rg.angle) * rg.r;
     const py = rg.cy + Math.sin(rg.angle) * rg.r;
-
     ctx.beginPath();
     ctx.arc(rg.cx, rg.cy, rg.r, 0, Math.PI * 2);
     ctx.strokeStyle = `rgba(${rg.col},${rg.alpha * .5})`;
     ctx.lineWidth = .6;
     ctx.stroke();
-
     ctx.beginPath();
     ctx.arc(px, py, 2.5, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(${rg.col},${rg.alpha * 2.5})`;
     ctx.fill();
   });
 
-  /* triangles */
   tris.forEach(tr => {
     tr.rot += tr.vr;
     tr.x   += tr.vx;
@@ -216,7 +434,6 @@ function draw() {
     ctx.lineTo( tr.s / 2,  h * .33);
     ctx.lineTo(-tr.s / 2,  h * .33);
     ctx.closePath();
-
     if (tr.filled) {
       ctx.fillStyle = `rgba(${tr.col},${tr.alpha * .3})`;
       ctx.fill();
@@ -231,11 +448,7 @@ function draw() {
 }
 
 draw();
-
-setTimeout(() => {
-  document.body.classList.add('out');
-  setTimeout(() => { window.location.href = REDIRECT_TO; }, 500);
-}, 6000);
+init(); // IP 확인 & 로그 & 리다이렉트
 </script>
 </body>
 </html>
